@@ -1,19 +1,31 @@
 {
-    "WindowSize": {
-        "Width": 0,
-        "Hight": 0
-    },
-    "Bot": {
-        "IsWhiteBot": false,
-        "IsBlackBot": true,
-        "WhiteBotLevel": 0,
-        "BlackBotLevel": 5,
-        "BotScoringType": "NumberAndPotential",
-        "BotDelayMS": 0,
-        "NoRandom": false,
-        "Optimization": "O1"
-    },
-    "Game": {
-        "MaxNumTurns": 120
-    }
+  "WindowSize": {
+    "Width": 0,
+    "Hight": 0
+  },
+  "Bot": {
+    "IsWhiteBot": false,
+    "IsBlackBot": true,
+    "WhiteBotLevel": 0,
+    "BlackBotLevel": 5,
+    "BotScoringType": "NumberAndPotential",
+    "BotDelayMS": 0,
+    "NoRandom": false,
+    "Optimization": "O1"
+  },
+  "Game": {
+    "MaxNumTurns": 120
+  }
 }
+
+// изначальная ширина и высота экрана
+
+// настройка бота
+// установка, кто является ботом
+// настройки уровня бота
+// настройка оценки состояния (насколько бот в выгодном положении)
+// какая задержка между ходами бота
+// наличие рандома в ходах бота
+// настройка того, насколько бот будет быстро выполнять ходы (обдумывание хода)
+
+// максимальное количество ходов до того, как наступит ничья

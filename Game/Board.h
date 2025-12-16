@@ -23,15 +23,17 @@ public:
     Board(const unsigned int W, const unsigned int H) : W(W), H(H)
     {
     }
-
+    // Инициализация и запуск SDL2, создание окна, загрузка текстур
     // draws start board
     int start_draw()
     {
+        // Проверка инициализации SDL2
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
         {
             print_exception("SDL_Init can't init SDL2 lib");
             return 1;
         }
+        // Автоматическое определение размера окна при значениях 0
         if (W == 0 || H == 0)
         {
             SDL_DisplayMode dm;
@@ -41,9 +43,10 @@ public:
                 return 1;
             }
             W = min(dm.w, dm.h);
-            W -= W / 15;
-            H = W;
+            W -= W / 15; // отступ от краев экрана
+            H = W; // квадратное окно
         }
+        // Создание окна и рендерера
         win = SDL_CreateWindow("Checkers", 0, H / 30, W, H, SDL_WINDOW_RESIZABLE);
         if (win == nullptr)
         {
@@ -56,6 +59,7 @@ public:
             print_exception("SDL_CreateRenderer can't create renderer");
             return 1;
         }
+        // Загрузка всех необходимых текстур
         board = IMG_LoadTexture(ren, board_path.c_str());
         w_piece = IMG_LoadTexture(ren, piece_white_path.c_str());
         b_piece = IMG_LoadTexture(ren, piece_black_path.c_str());
@@ -69,11 +73,13 @@ public:
             return 1;
         }
         SDL_GetRendererOutputSize(ren, &W, &H);
+        // Создание начальной расстановки шашек
         make_start_mtx();
         rerender();
         return 0;
     }
 
+    // Сброс доски для повторной игры
     void redraw()
     {
         game_results = -1;
@@ -84,8 +90,10 @@ public:
         clear_highlight();
     }
 
+    // Перемещение шашки с обработкой взятия
     void move_piece(move_pos turn, const int beat_series = 0)
     {
+        // Удаление битой шашки (если есть)
         if (turn.xb != -1)
         {
             mtx[turn.xb][turn.yb] = 0;
@@ -93,8 +101,10 @@ public:
         move_piece(turn.x, turn.y, turn.x2, turn.y2, beat_series);
     }
 
+    // Основная логика перемещения шашки
     void move_piece(const POS_T i, const POS_T j, const POS_T i2, const POS_T j2, const int beat_series = 0)
     {
+        // Проверка валидности хода
         if (mtx[i2][j2])
         {
             throw runtime_error("final position is not empty, can't move");
@@ -103,19 +113,22 @@ public:
         {
             throw runtime_error("begin position is empty, can't move");
         }
+        // Превращение в дамку при достижении противоположного края
         if ((mtx[i][j] == 1 && i2 == 0) || (mtx[i][j] == 2 && i2 == 7))
             mtx[i][j] += 2;
         mtx[i2][j2] = mtx[i][j];
         drop_piece(i, j);
-        add_history(beat_series);
+        add_history(beat_series); // сохранение в историю
     }
 
+    // Удаление шашки с доски
     void drop_piece(const POS_T i, const POS_T j)
     {
         mtx[i][j] = 0;
         rerender();
     }
 
+    // Превращение шашки в дамку
     void turn_into_queen(const POS_T i, const POS_T j)
     {
         if (mtx[i][j] == 0 || mtx[i][j] > 2)
@@ -125,11 +138,14 @@ public:
         mtx[i][j] += 2;
         rerender();
     }
+
+    // Получение текущего состояния доски
     vector<vector<POS_T>> get_board() const
     {
         return mtx;
     }
 
+    // Подсветка указанных клеток
     void highlight_cells(vector<pair<POS_T, POS_T>> cells)
     {
         for (auto pos : cells)
@@ -140,6 +156,7 @@ public:
         rerender();
     }
 
+    // Очистка всех подсветок
     void clear_highlight()
     {
         for (POS_T i = 0; i < 8; ++i)
@@ -149,6 +166,7 @@ public:
         rerender();
     }
 
+    // Установка выбранной клетки
     void set_active(const POS_T x, const POS_T y)
     {
         active_x = x;
@@ -156,6 +174,7 @@ public:
         rerender();
     }
 
+    // Сброс выбранной клетки
     void clear_active()
     {
         active_x = -1;
@@ -163,11 +182,13 @@ public:
         rerender();
     }
 
+    // Проверка подсветки клетки
     bool is_highlighted(const POS_T x, const POS_T y)
     {
         return is_highlighted_[x][y];
     }
 
+    // Откат на предыдущее состояние (отмена хода)
     void rollback()
     {
         auto beat_series = max(1, *(history_beat_series.rbegin()));
@@ -181,12 +202,14 @@ public:
         clear_active();
     }
 
+    // Отображение финального экрана
     void show_final(const int res)
     {
         game_results = res;
         rerender();
     }
 
+    // Обновление размеров при изменении окна
     // use if window size changed
     void reset_window_size()
     {
@@ -194,6 +217,7 @@ public:
         rerender();
     }
 
+    // Очистка ресурсов SDL
     void quit()
     {
         SDL_DestroyTexture(board);
@@ -215,11 +239,13 @@ public:
     }
 
 private:
+    // Добавление состояния в историю
     void add_history(const int beat_series = 0)
     {
         history_mtx.push_back(mtx);
         history_beat_series.push_back(beat_series);
     }
+    // Создание начальной расстановки
     // function to make start matrix
     void make_start_mtx()
     {
@@ -237,6 +263,7 @@ private:
         add_history();
     }
 
+    // Полная перерисовка всех элементов
     // function that re-draw all the textures
     void rerender()
     {
@@ -327,6 +354,7 @@ private:
         SDL_PollEvent(&windowEvent);
     }
 
+    // Логирование ошибок
     void print_exception(const string& text) {
         ofstream fout(project_path + "log.txt", ios_base::app);
         fout << "Error: " << text << ". "<< SDL_GetError() << endl;
@@ -334,10 +362,10 @@ private:
     }
 
   public:
-    int W = 0;
-    int H = 0;
+    int W = 0; // ширина окна
+    int H = 0; // высота окна
     // history of boards
-    vector<vector<vector<POS_T>>> history_mtx;
+    vector<vector<vector<POS_T>>> history_mtx; // история состояний доски
 
   private:
     SDL_Window *win = nullptr;
@@ -350,6 +378,7 @@ private:
     SDL_Texture *b_queen = nullptr;
     SDL_Texture *back = nullptr;
     SDL_Texture *replay = nullptr;
+    // Пути к файлам текстур
     // texture files names
     const string textures_path = project_path + "Textures/";
     const string board_path = textures_path + "board.png";
@@ -362,15 +391,18 @@ private:
     const string draw_path = textures_path + "draw.png";
     const string back_path = textures_path + "back.png";
     const string replay_path = textures_path + "replay.png";
+    // Координаты выбранной клетки
     // coordinates of chosen cell
     int active_x = -1, active_y = -1;
     // game result if exist
     int game_results = -1;
+    // Матрица подсветки возможных ходов
     // matrix of possible moves
     vector<vector<bool>> is_highlighted_ = vector<vector<bool>>(8, vector<bool>(8, 0));
     // matrix of possible moves
     // 1 - white, 2 - black, 3 - white queen, 4 - black queen
     vector<vector<POS_T>> mtx = vector<vector<POS_T>>(8, vector<POS_T>(8, 0));
+    // История серий взятий для корректного отката
     // series of beats for each move
     vector<int> history_beat_series;
 };
