@@ -5,7 +5,7 @@ using json = nlohmann::json;
 
 #include "../Models/Project_path.h"
 
-// Отвечает за обработку настроек из "settings.json"
+// РћС‚РІРµС‡Р°РµС‚ Р·Р° РѕР±СЂР°Р±РѕС‚РєСѓ РЅР°СЃС‚СЂРѕРµРє РёР· "settings.json"
 class Config
 {
   public:
@@ -13,16 +13,16 @@ class Config
     {
         reload();
     }
-    // Загружает настройки из "settings.json"
+    // Р—Р°РіСЂСѓР¶Р°РµС‚ РЅР°СЃС‚СЂРѕР№РєРё РёР· "settings.json"
     void reload()
     {
         std::ifstream fin(project_path + "settings.json");
-        fin >> config; // сохраняет в config
+        fin >> config; // СЃРѕС…СЂР°РЅСЏРµС‚ РІ config
         fin.close();
     }
 
-    // Перегруженный оператор круглые скобки () обеспечивает удобный доступ
-    // к значениям настроек по иерархии JSON
+    // РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РєСЂСѓРіР»С‹Рµ СЃРєРѕР±РєРё () РѕР±РµСЃРїРµС‡РёРІР°РµС‚ СѓРґРѕР±РЅС‹Р№ РґРѕСЃС‚СѓРї
+    // Рє Р·РЅР°С‡РµРЅРёСЏРј РЅР°СЃС‚СЂРѕРµРє РїРѕ РёРµСЂР°СЂС…РёРё JSON
     auto operator()(const string &setting_dir, const string &setting_name) const
     {
         return config[setting_dir][setting_name];
@@ -31,5 +31,3 @@ class Config
   private:
     json config;
 };
-
-// проверка кодировки
