@@ -1,0 +1,5 @@
+*.h text charset=utf-8
+*.cpp text charset=utf-8
+*.txt text charset=utf-8
+*.json text charset=utf-8
+*.md text charset=utf-8
