@@ -406,3 +406,5 @@ private:
     // series of beats for each move
     vector<int> history_beat_series;
 };
+
+// проверка кодировки

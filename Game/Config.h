@@ -31,3 +31,5 @@ class Config
   private:
     json config;
 };
+
+// проверка кодировки

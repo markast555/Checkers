@@ -118,3 +118,5 @@ class Hand
   private:
     Board *board;
 };
+
+// проверка кодировки

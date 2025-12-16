@@ -296,3 +296,5 @@ class Game
     int beat_series;
     bool is_replay = false;
 };
+
+// проверка кодировки
